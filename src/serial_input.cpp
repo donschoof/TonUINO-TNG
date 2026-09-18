@@ -67,6 +67,18 @@ commandRaw SerialInput::getCommandRaw() {
       }
       cmdWord[len] = '\0';
       if (strcmp(cmdWord, "WRITECARD") == 0 && Serial.read() == ' ') {
+        if (isAlpha(Serial.peek())) {
+          char subWord[8];
+          uint8_t subLen = 0;
+          while (isAlpha(Serial.peek()) && subLen < sizeof(subWord) - 1) {
+            subWord[subLen++] = Serial.read();
+          }
+          subWord[subLen] = '\0';
+          if (strcmp(subWord, "CANCEL") == 0) {
+            return commandRaw::write_card_cancel_from_serial;
+          }
+          return commandRaw::none;
+        }
         folderSettings card{};
         card.mode = static_cast<pmode_t>(Serial.parseInt());
         switch (card.mode) {
