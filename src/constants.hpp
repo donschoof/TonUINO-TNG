@@ -165,6 +165,10 @@ static_assert(SUM_PCB == 1 , "Please uncomment exactly one of the PCB lines (Ton
  *    9: Party von bis  10: Hörbuch einzel 11: Wiederhole      12: Quiz Spiel
  *   13: Memory Spiel   14: Bluetooth an/aus (BT_MODULE)      15: Teekesselchen Spiel
  *   16: Hörbuch von bis
+ *
+ * es gibt keinen Timeout beim Warten auf das Auflegen der Karte. Mit dem folgenden Befehl kann ein
+ * per WRITECARD gestarteter, noch laufender Schreibvorgang abgebrochen werden:
+ *   WRITECARD CANCEL
  */
 //#define SerialInputAsCommand
 
