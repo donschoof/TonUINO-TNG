@@ -703,15 +703,31 @@ bool Base::checkForWritingCard(command cmd, command_e const &cmd_e) {
     if (chip_card.isCardRemoved()) {
       SM_writeCard::folder = tonuino.getSerialWriteCard();
       SM_writeCard::start();
-      writingCard = true;
+      writingCard           = true;
+      writingCardFromSerial = true;
       return true;
     }
   }
 #endif
   if (writingCard) {
     SM_writeCard::dispatch(cmd_e);
-    if (SM_writeCard::is_in_state<finished_writeCard>() or SM_writeCard::is_in_state<finished_abort_writeCard>()) {
+    const bool finished       = SM_writeCard::is_in_state<finished_writeCard>();
+    const bool finished_abort = SM_writeCard::is_in_state<finished_abort_writeCard>();
+    if (finished or finished_abort) {
       writingCard = false;
+#ifdef SerialInputAsCommand
+      if (writingCardFromSerial) {
+        writingCardFromSerial = false;
+        if (finished) {
+          Serial.println(F("WRITECARD: OK"));
+          Serial.println(F("WRITECARD: Karte erfolgreich beschrieben"));
+        }
+        else {
+          Serial.println(F("WRITECARD: ERROR"));
+          Serial.println(F("WRITECARD: Schreiben fehlgeschlagen"));
+        }
+      }
+#endif
     }
     return true;
   }

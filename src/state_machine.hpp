@@ -83,6 +83,9 @@ protected:
   bool checkForWritingCard(command cmd, command_e const &cmd_e);
   bool writingCard{};
 #endif
+#ifdef SerialInputAsCommand
+  bool writingCardFromSerial{};
+#endif
 #ifdef NEO_RING
   void handleBrightness(command cmd);
 #endif
