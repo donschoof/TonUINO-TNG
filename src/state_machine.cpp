@@ -708,6 +708,15 @@ bool Base::checkForWritingCard(command cmd, command_e const &cmd_e) {
       return true;
     }
   }
+  if (cmd_e.cmd_raw == commandRaw::write_card_cancel_from_serial) {
+    if (writingCard && writingCardFromSerial) {
+      SM_writeCard::dispatch(command_e{commandRaw::pauseLong}); // löst isAbort() aus, siehe SM<SMT>::isAbort()
+    }
+    else {
+      Serial.println(F("WRITECARD: kein Schreibvorgang aktiv, nichts abzubrechen"));
+    }
+    return true;
+  }
 #endif
   if (writingCard) {
     SM_writeCard::dispatch(cmd_e);
