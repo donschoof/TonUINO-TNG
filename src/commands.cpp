@@ -143,6 +143,9 @@ const __FlashStringHelper* Commands::getCommandRawStr(commandRaw cmd) {
 #ifdef TonUINO_Esp32
   case commandRaw::card_from_web : return(F("card_from_web" )); break;
 #endif
+#ifdef SerialInputAsCommand
+  case commandRaw::write_card_from_serial: return(F("write_card_from_serial")); break;
+#endif
   default                        : return(F(""              )); break;
   }
 }

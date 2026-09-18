@@ -76,6 +76,7 @@ public:
 
 #ifdef SerialInputAsCommand
   uint8_t getMenuJump() const { return serialInput.get_menu_jump(); }
+  const folderSettings& getSerialWriteCard() const { return serialInput.get_write_card(); }
 #endif
 
   void shutdown();

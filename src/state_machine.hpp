@@ -79,7 +79,7 @@ protected:
   bool handleShortcut(uint8_t shortCut);
   void handleReadCard();
   bool checkForShortcutAndShutdown(command cmd);
-#ifdef TonUINO_Esp32
+#if defined(TonUINO_Esp32) || defined(SerialInputAsCommand)
   bool checkForWritingCard(command cmd, command_e const &cmd_e);
   bool writingCard{};
 #endif

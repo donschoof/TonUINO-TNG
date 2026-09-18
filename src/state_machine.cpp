@@ -685,9 +685,10 @@ bool Base::checkForShortcutAndShutdown(command cmd) {
   return false;
 }
 
-#ifdef TonUINO_Esp32
+#if defined(TonUINO_Esp32) || defined(SerialInputAsCommand)
 bool Base::checkForWritingCard(command cmd, command_e const &cmd_e) {
 
+#ifdef TonUINO_Esp32
   if (cmd == command::write_card_from_web) {
     if (chip_card.isCardRemoved()) {
       SM_writeCard::folder = settings.getShortCut(0);
@@ -696,6 +697,17 @@ bool Base::checkForWritingCard(command cmd, command_e const &cmd_e) {
       return true;
     }
   }
+#endif
+#ifdef SerialInputAsCommand
+  if (cmd_e.cmd_raw == commandRaw::write_card_from_serial) {
+    if (chip_card.isCardRemoved()) {
+      SM_writeCard::folder = tonuino.getSerialWriteCard();
+      SM_writeCard::start();
+      writingCard = true;
+      return true;
+    }
+  }
+#endif
   if (writingCard) {
     SM_writeCard::dispatch(cmd_e);
     if (SM_writeCard::is_in_state<finished_writeCard>() or SM_writeCard::is_in_state<finished_abort_writeCard>()) {
@@ -739,7 +751,7 @@ void Idle::react(command_e const &cmd_e) {
   if (checkForShortcutAndShutdown(cmd))
     return;
 
-#ifdef TonUINO_Esp32
+#if defined(TonUINO_Esp32) || defined(SerialInputAsCommand)
   if (checkForWritingCard(cmd, cmd_e))
     return;
 #endif
@@ -799,7 +811,7 @@ void Idle::react(card_e const &c_e) {
   if (c_e.card_ev != cardEvent::none) {
     LOG(state_log, s_debug, str_Idle(), F("::react(c) "), static_cast<int>(c_e.card_ev));
   }
-#ifdef TonUINO_Esp32
+#if defined(TonUINO_Esp32) || defined(SerialInputAsCommand)
   if (writingCard)
     return;
 #endif
@@ -939,7 +951,7 @@ void Pause::react(command_e const &cmd_e) {
   if (checkForShortcutAndShutdown(cmd))
     return;
 
-#ifdef TonUINO_Esp32
+#if defined(TonUINO_Esp32) || defined(SerialInputAsCommand)
   if (checkForWritingCard(cmd, cmd_e))
     return;
 #endif
@@ -972,7 +984,7 @@ void Pause::react(card_e const &c_e) {
   if (c_e.card_ev != cardEvent::none) {
     LOG(state_log, s_debug, str_Pause(), F("::react(c) "), static_cast<int>(c_e.card_ev));
   }
-#ifdef TonUINO_Esp32
+#if defined(TonUINO_Esp32) || defined(SerialInputAsCommand)
   if (writingCard)
     return;
 #endif
